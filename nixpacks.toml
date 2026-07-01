@@ -1,7 +1,0 @@
-providers = ["node"]
-
-[phases.install]
-cmds = ["cd server && npm install"]
-
-[start]
-cmd = "node server/index.js"
