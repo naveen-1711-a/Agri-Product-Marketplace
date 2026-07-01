@@ -167,11 +167,6 @@ npm run dev
 cd epm/client
 npm install
 npm run dev
-
-# Open browser
-open http://localhost:3000
-
-# Admin login
-# Email: admin@epm.com
-# Password: Admin@123
 ```
+
+
