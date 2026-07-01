@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment files (keep secrets safe)
+.env
+server/.env
+client/.env
+client/.env.local
+
+# Build output
+client/dist/
+client/build/
+
+# Uploads (user uploaded files)
+server/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Test scripts
+server/test_*.js
+server/clear_carts.js
+
+# Misc
+*.tgz
+.cache/
