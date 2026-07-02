@@ -43,7 +43,7 @@ exports.getProduct = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     const { name, description, category, price, stock, unit, tags, sellerName, villageName } = req.body;
-    const images = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+    const images = req.files ? req.files.map(f => f.path) : [];
     
     const isAdmin = req.user.role === 'admin';
     const finalSellerName = isAdmin ? (sellerName || 'EPM Admin') : req.user.name;
@@ -69,7 +69,7 @@ exports.updateProduct = async (req, res) => {
     const product = await Product.findOne({ _id: req.params.id, sellerId: req.user._id });
     if (!product) return res.status(404).json({ success: false, message: 'Product not found or unauthorized' });
     const { name, description, category, price, stock, unit } = req.body;
-    const newImages = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+    const newImages = req.files ? req.files.map(f => f.path) : [];
     const keepImages = product.images;
     Object.assign(product, { name, description, category, price: Number(price), stock: Number(stock), unit, status: 'pending' });
     if (newImages.length) product.images = [...keepImages, ...newImages];
