@@ -5,23 +5,6 @@ require('dotenv').config();
 const connectDB = require('./config/db');
 
 const app = express();
-connectDB();
-
-// Seed admin
-const seedAdmin = async () => {
-  const User = require('./models/User');
-  const exists = await User.findOne({ role: 'admin' });
-  if (!exists) {
-    await User.create({
-      name: 'EPM Admin',
-      email: process.env.ADMIN_EMAIL || 'admin@epm.com',
-      password: process.env.ADMIN_PASSWORD || 'Admin@123',
-      role: 'admin',
-    });
-    console.log('✅ Admin seeded: admin@epm.com / Admin@123');
-  }
-};
-setTimeout(seedAdmin, 2000);
 
 // Middleware
 app.use(cors({ origin: '*', credentials: true }));
@@ -49,5 +32,27 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ success: false, message: err.message || 'Server error' });
 });
 
+// Seed admin only after DB is connected
+const seedAdmin = async () => {
+  const User = require('./models/User');
+  const exists = await User.findOne({ role: 'admin' });
+  if (!exists) {
+    await User.create({
+      name: 'EPM Admin',
+      email: process.env.ADMIN_EMAIL || 'admin@epm.com',
+      password: process.env.ADMIN_PASSWORD || 'Admin@123',
+      role: 'admin',
+    });
+    console.log('✅ Admin seeded: admin@epm.com / Admin@123');
+  }
+};
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 EPM Server running on port ${PORT}`));
+
+const startServer = async () => {
+  await connectDB(); // wait for connection before anything else
+  await seedAdmin(); // safe to query now
+  app.listen(PORT, () => console.log(`🚀 EPM Server running on port ${PORT}`));
+};
+
+startServer();
