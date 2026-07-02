@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getMyEquipment, deleteEquipment, toggleEquipmentAvailability, getSellerEquipmentStats } from '../../services/equipmentApi';
 import toast from 'react-hot-toast';
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiToggleLeft, FiToggleRight, FiMapPin, FiClock, FiCalendar, FiTrendingUp } from 'react-icons/fi';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const CATEGORY_ICONS = {
   'Tractor': '🚜', 'Rotavator': '🌾', 'Seed Drill': '🌱', 'Harvester': '🚜',
@@ -62,7 +63,6 @@ export default function SellerEquipmentPage() {
     }
   };
 
-  const imageBase = `${window.location.protocol}//${window.location.hostname}:5000/uploads/`;
 
   return (
     <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
@@ -116,7 +116,7 @@ export default function SellerEquipmentPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {equipment.map((item) => {
             const st = STATUS_STYLES[item.status] || STATUS_STYLES.pending;
-            const imgSrc = item.images?.[0] ? `${imageBase}${item.images[0]}` : null;
+            const imgSrc = getImageUrl(item.images?.[0]);
             return (
               <div key={item._id} style={{ background: 'white', borderRadius: '16px', border: '1px solid #e5e7eb', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex', gap: 0 }}>
                 {/* Image */}

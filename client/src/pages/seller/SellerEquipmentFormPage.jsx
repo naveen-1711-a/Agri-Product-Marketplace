@@ -3,7 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { createEquipment, updateEquipment, getCategories } from '../../services/equipmentApi';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { FiUpload, FiX, FiMapPin, FiArrowLeft, FiSave, FiInfo } from 'react-icons/fi';
+import { FiUploadCloud, FiX, FiMapPin, FiArrowLeft, FiSave, FiInfo } from 'react-icons/fi';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const EMPTY = {
   name: '', category: '', description: '',
@@ -129,7 +130,6 @@ export default function SellerEquipmentFormPage() {
     }
   };
 
-  const imageBase = `${window.location.protocol}//${window.location.hostname}:5000/uploads/`;
 
   if (fetching) {
     return (
@@ -256,7 +256,7 @@ export default function SellerEquipmentFormPage() {
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {existingImages.map((img, i) => (
                   <div key={i} style={{ position: 'relative', width: '80px', height: '80px' }}>
-                    <img src={`${imageBase}${img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', border: '2px solid #e5e7eb' }} />
+                    <img src={getImageUrl(img)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', border: '2px solid #e5e7eb' }} />
                     <button type="button" onClick={() => removeExisting(i)} style={{ position: 'absolute', top: '-6px', right: '-6px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
                       <FiX />
                     </button>

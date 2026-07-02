@@ -9,6 +9,7 @@ import {
   FiUser, FiMessageSquare,
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const CATEGORY_ICONS = {
   'Tractor': '🚜', 'Rotavator': '🌾', 'Seed Drill': '🌱', 'Harvester': '🚜',
@@ -46,7 +47,6 @@ export default function EquipmentDetailPage() {
     load();
   }, [id]);
 
-  const imageBase = `${window.location.protocol}//${window.location.hostname}:5000/uploads/`;
 
   const phone = equipment?.contactPhone || equipment?.seller?.phone;
 
@@ -140,7 +140,7 @@ export default function EquipmentDetailPage() {
               <div style={{ position: 'relative', height: '380px', background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)' }}>
                 {images.length > 0 ? (
                   <img
-                    src={`${imageBase}${images[activeImage]}`}
+                    src={getImageUrl(images[activeImage])}
                     alt={equipment.name}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
@@ -170,7 +170,7 @@ export default function EquipmentDetailPage() {
                   {images.map((img, i) => (
                     <img
                       key={i}
-                      src={`${imageBase}${img}`}
+                      src={getImageUrl(img)}
                       alt=""
                       onClick={() => setActiveImage(i)}
                       style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', cursor: 'pointer', border: activeImage === i ? '2px solid #15803d' : '2px solid transparent', opacity: activeImage === i ? 1 : 0.7, transition: 'all 0.2s' }}

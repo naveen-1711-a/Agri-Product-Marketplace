@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getEquipmentList, getCategories } from '../../services/equipmentApi';
 import { FiSearch, FiFilter, FiMapPin, FiEye, FiX } from 'react-icons/fi';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const CATEGORY_ICONS = {
   'Tractor': '🚜', 'Rotavator': '🌾', 'Seed Drill': '🌱', 'Harvester': '🚜',
@@ -255,9 +256,7 @@ export default function EquipmentPage() {
 }
 
 function EquipmentCard({ item }) {
-  const imageUrl = item.images?.[0]
-    ? `${window.location.protocol}//${window.location.hostname}:5000/uploads/${item.images[0]}`
-    : null;
+  const imageUrl = getImageUrl(item.images?.[0]);
 
   return (
     <Link to={`/equipment/${item._id}`} style={{ textDecoration: 'none' }}>

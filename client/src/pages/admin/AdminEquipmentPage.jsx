@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { adminGetAllEquipment, adminUpdateEquipmentStatus, adminDeleteEquipment, adminGetEquipmentStats } from '../../services/equipmentApi';
 import toast from 'react-hot-toast';
 import { FiSearch, FiCheckCircle, FiXCircle, FiTrash2, FiRefreshCw, FiPlus, FiEdit2 } from 'react-icons/fi';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const CATEGORY_ICONS = {
   'Tractor': '🚜', 'Rotavator': '🌾', 'Seed Drill': '🌱', 'Harvester': '🚜',
@@ -89,7 +90,6 @@ export default function AdminEquipmentPage() {
     finally { setActionLoading(null); }
   };
 
-  const imageBase = `${window.location.protocol}//${window.location.hostname}:5000/uploads/`;
 
   return (
     <div style={{ padding: '1.5rem' }}>
@@ -177,7 +177,7 @@ export default function AdminEquipmentPage() {
               <tbody>
                 {equipment.map((item, idx) => {
                   const st = STATUS_CONFIG[item.status] || STATUS_CONFIG.pending;
-                  const imgSrc = item.images?.[0] ? `${imageBase}${item.images[0]}` : null;
+                  const imgSrc = getImageUrl(item.images?.[0]);
                   return (
                     <tr key={item._id} style={{ borderBottom: '1px solid #f3f4f6', background: idx % 2 === 0 ? 'white' : '#fafafa' }}>
                       {/* Equipment */}
