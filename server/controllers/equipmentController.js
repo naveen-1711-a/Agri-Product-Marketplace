@@ -123,7 +123,7 @@ exports.createEquipment = async (req, res) => {
       village, district, state, mapLink, latitude, longitude, contactPhone,
     } = req.body;
 
-    const images = (req.files || []).map((f) => `${f.filename}`);
+    const images = (req.files || []).map((f) => f.path);
 
     const equipment = await Equipment.create({
       seller: req.user._id,
@@ -168,7 +168,7 @@ exports.updateEquipment = async (req, res) => {
     const removed = equipment.images.filter((img) => !kept.includes(img));
     deleteFiles(removed);
 
-    const newImages = (req.files || []).map((f) => f.filename);
+    const newImages = (req.files || []).map((f) => f.path);
     const allImages = [...kept, ...newImages];
 
     Object.assign(equipment, {
