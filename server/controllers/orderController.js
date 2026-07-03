@@ -2,6 +2,62 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Cart = require('../models/Cart');
 const User = require('../models/User');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+
+// Initialize Razorpay instance safely
+let razorpayInstance = null;
+try {
+  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    razorpayInstance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+  }
+} catch (error) {
+  console.log("Razorpay initialization failed:", error.message);
+}
+
+exports.createRazorpayOrder = async (req, res) => {
+  try {
+    const { amount } = req.body;
+    
+    if (!razorpayInstance) {
+      return res.status(500).json({ success: false, message: 'Razorpay is not configured' });
+    }
+
+    const options = {
+      amount: amount * 100, // amount in smallest currency unit (paise)
+      currency: "INR",
+      receipt: `receipt_order_${Date.now()}`
+    };
+
+    const order = await razorpayInstance.orders.create(options);
+    res.json({ success: true, order, keyId: process.env.RAZORPAY_KEY_ID });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.verifyRazorpayPayment = async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    
+    const sign = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSign = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(sign.toString())
+      .digest("hex");
+
+    if (razorpay_signature === expectedSign) {
+      return res.status(200).json({ success: true, message: "Payment verified successfully" });
+    } else {
+      return res.status(400).json({ success: false, message: "Invalid signature sent!" });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 exports.placeOrder = async (req, res) => {
   try {
@@ -26,6 +82,7 @@ exports.placeOrder = async (req, res) => {
     const order = await Order.create({
       customerId: req.user._id, customerName: req.user.name,
       products, totalAmount, shippingAddress, paymentMethod: paymentMethod || 'COD',
+      paymentStatus: paymentMethod === 'COD' ? 'pending' : 'paid'
     });
     await Cart.findOneAndUpdate({ userId: req.user._id }, { items: [] });
     

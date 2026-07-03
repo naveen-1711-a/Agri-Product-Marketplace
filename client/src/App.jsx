@@ -60,17 +60,17 @@ export default function App() {
           />
           <Routes>
             <Route element={<MainLayout />}>
-              {/* Protected Main Routes (forced login) */}
-              <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-              <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
-              <Route path="/products/:id" element={<ProtectedRoute><ProductDetailPage /></ProtectedRoute>} />
-              <Route path="/categories" element={<ProtectedRoute><CategoriesPage /></ProtectedRoute>} />
-              <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
-              <Route path="/contact" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />
+              {/* Public Main Routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/products/:id" element={<ProductDetailPage />} />
+              <Route path="/categories" element={<CategoriesPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
 
               {/* Equipment Routes (public) */}
-              <Route path="/equipment" element={<ProtectedRoute><EquipmentPage /></ProtectedRoute>} />
-              <Route path="/equipment/:id" element={<ProtectedRoute><EquipmentDetailPage /></ProtectedRoute>} />
+              <Route path="/equipment" element={<EquipmentPage />} />
+              <Route path="/equipment/:id" element={<EquipmentDetailPage />} />
 
               {/* Auth Routes (redirect if logged in) */}
               <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />

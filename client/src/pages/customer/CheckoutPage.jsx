@@ -27,10 +27,17 @@ export default function CheckoutPage() {
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
 
 
-  const handleOrder = async (e) => {
-    e.preventDefault();
-    if (!items.length) { toast.error('Cart is empty'); return; }
-    setLoading(true);
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const submitOrder = async () => {
     try {
       const { data } = await api.post('/orders', {
         shippingAddress: form, paymentMethod,
@@ -48,6 +55,68 @@ export default function CheckoutPage() {
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to place order');
     } finally { setLoading(false); }
+  };
+
+  const handleOrder = async (e) => {
+    e.preventDefault();
+    if (!items.length) { toast.error('Cart is empty'); return; }
+    setLoading(true);
+
+    if (paymentMethod === 'UPI') {
+      const res = await loadRazorpay();
+      if (!res) {
+        toast.error('Razorpay failed to load');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data: rzpData } = await api.post('/orders/razorpay/create', { amount: total });
+        
+        const options = {
+          key: rzpData.keyId,
+          amount: rzpData.order.amount,
+          currency: rzpData.order.currency,
+          name: 'EPM Marketplace',
+          description: 'Order Payment',
+          order_id: rzpData.order.id,
+          handler: async function (response) {
+            try {
+              const verifyRes = await api.post('/orders/razorpay/verify', response);
+              if (verifyRes.data.success) {
+                await submitOrder();
+              }
+            } catch (err) {
+              toast.error('Payment verification failed');
+              setLoading(false);
+            }
+          },
+          prefill: {
+            name: form.name,
+            email: user?.email || '',
+            contact: form.phone
+          },
+          theme: { color: '#1B5E20' },
+          modal: {
+            ondismiss: function() {
+              setLoading(false);
+            }
+          }
+        };
+        
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.on('payment.failed', function (response) {
+          toast.error(response.error.description || 'Payment Failed');
+          setLoading(false);
+        });
+        paymentObject.open();
+      } catch (err) {
+        toast.error('Failed to initiate payment');
+        setLoading(false);
+      }
+    } else {
+      await submitOrder();
+    }
   };
 
   if (success) return (
@@ -85,7 +154,7 @@ export default function CheckoutPage() {
           <div className="card p-6">
             <h2 className="font-bold text-gray-800 mb-4">Payment Method</h2>
             <div className="space-y-3">
-              {[['COD','💵 Cash on Delivery','Pay when your order arrives'],['UPI','📱 UPI Payment','Google Pay, PhonePe, Paytm']].map(([val, label, desc]) => (
+              {[['COD','💵 Cash on Delivery','Pay when your order arrives'],['UPI','💳 Pay Online (Razorpay)','UPI, Credit/Debit Cards, NetBanking']].map(([val, label, desc]) => (
                 <label key={val} className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors ${paymentMethod === val ? 'border-primary-700 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <input type="radio" name="payment" value={val} checked={paymentMethod === val} onChange={() => setPaymentMethod(val)} className="text-primary-700" />
                   <div><p className="font-medium text-sm">{label}</p><p className="text-xs text-gray-500">{desc}</p></div>

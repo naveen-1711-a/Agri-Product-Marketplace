@@ -2,11 +2,14 @@ const express = require('express');
 const router = express.Router();
 const {
   placeOrder, getMyOrders, getOrderById, cancelOrder,
-  getSellerOrders, updateOrderStatus, getAllOrders, getAdminStats
+  getSellerOrders, updateOrderStatus, getAllOrders, getAdminStats,
+  createRazorpayOrder, verifyRazorpayPayment
 } = require('../controllers/orderController');
 const { protect, adminOnly, sellerOnly, customerOnly } = require('../middleware/auth');
 
 // Customer/All Users
+router.post('/razorpay/create', protect, createRazorpayOrder);
+router.post('/razorpay/verify', protect, verifyRazorpayPayment);
 router.post('/', protect, placeOrder);
 router.get('/my', protect, getMyOrders);
 router.get('/my/:id', protect, getOrderById);
