@@ -22,8 +22,16 @@ exports.createRazorpayOrder = async (req, res) => {
   try {
     const { amount } = req.body;
     
+    // Initialize Razorpay dynamically if not already done
+    if (!razorpayInstance && process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+      razorpayInstance = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_KEY_SECRET,
+      });
+    }
+
     if (!razorpayInstance) {
-      return res.status(500).json({ success: false, message: 'Razorpay is not configured' });
+      return res.status(500).json({ success: false, message: 'Razorpay keys are missing on the server. Please check Render environment variables.' });
     }
 
     const options = {
