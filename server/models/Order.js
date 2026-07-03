@@ -33,4 +33,9 @@ const orderSchema = new mongoose.Schema({
   notes: { type: String, default: '' },
 }, { timestamps: true });
 
+orderSchema.index({ customerId: 1 });
+orderSchema.index({ 'products.sellerId': 1 });
+orderSchema.index({ status: 1 });
+orderSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Order', orderSchema);

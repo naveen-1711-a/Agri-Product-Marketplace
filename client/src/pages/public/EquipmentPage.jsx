@@ -45,7 +45,12 @@ export default function EquipmentPage() {
     }
   }, [filters]);
 
-  useEffect(() => { fetchEquipment(1); }, [fetchEquipment]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchEquipment(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [fetchEquipment]);
   useEffect(() => {
     getCategories().then((r) => setCategories(r.data.data)).catch(() => {});
   }, []);

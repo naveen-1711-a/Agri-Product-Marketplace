@@ -38,7 +38,13 @@ export default function ProductsPage() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchProducts(1); setPage(1); }, [filters]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProducts(1);
+      setPage(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [filters]);
 
   useEffect(() => {
     setFilters(f => ({

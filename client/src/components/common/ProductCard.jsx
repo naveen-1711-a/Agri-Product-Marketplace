@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { FiStar, FiShoppingCart, FiMapPin, FiHeart } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { getImageUrl } from '../../utils/imageUrl';
 
 export default function ProductCard({ product }) {
   const { addToCart } = useCart();
@@ -18,7 +19,7 @@ export default function ProductCard({ product }) {
     <div className="card group relative overflow-hidden flex flex-col">
       <Link to={`/products/${product._id}`} className="relative overflow-hidden">
         <img
-          src={product.images?.[0] ? product.images[0] : `https://placehold.co/300x200/A5D6A7/1B5E20?text=${encodeURIComponent(product.name)}`}
+          src={product.images?.[0] ? getImageUrl(product.images[0]) : `https://placehold.co/300x200/A5D6A7/1B5E20?text=${encodeURIComponent(product.name)}`}
           alt={product.name}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />

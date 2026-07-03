@@ -50,7 +50,12 @@ export default function AdminEquipmentPage() {
     }
   };
 
-  useEffect(() => { load(1); }, [search, statusFilter]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      load(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search, statusFilter]);
 
   const handleApprove = async (id) => {
     setActionLoading(id + '_approve');

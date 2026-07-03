@@ -42,5 +42,8 @@ const equipmentSchema = new mongoose.Schema({
 
 equipmentSchema.index({ category: 1, village: 1, district: 1, status: 1, isAvailable: 1 });
 equipmentSchema.index({ name: 'text', description: 'text', village: 'text', district: 'text' });
+equipmentSchema.index({ seller: 1 });
+equipmentSchema.index({ createdAt: -1 });
+equipmentSchema.index({ pricePerDay: 1 });
 
 module.exports = mongoose.model('Equipment', equipmentSchema);

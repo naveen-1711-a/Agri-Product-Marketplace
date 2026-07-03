@@ -71,11 +71,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 p-4 bg-primary-50 rounded-xl text-xs text-gray-600 space-y-1">
-            <p className="font-semibold text-primary-dark mb-2">Demo credentials:</p>
-            <p>🔐 Admin: admin@epm.com / Admin@123</p>
-            <p>👤 Customer: register below</p>
-          </div>
+
 
           <p className="text-center text-sm text-gray-600 mt-5">
             New customer?{' '}
