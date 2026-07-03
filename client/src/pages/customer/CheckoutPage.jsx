@@ -111,7 +111,8 @@ export default function CheckoutPage() {
         });
         paymentObject.open();
       } catch (err) {
-        toast.error('Failed to initiate payment');
+        console.error("Razorpay initiation error:", err);
+        toast.error(err.response?.data?.message || 'Failed to initiate payment');
         setLoading(false);
       }
     } else {
