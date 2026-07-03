@@ -112,7 +112,8 @@ export default function CheckoutPage() {
         paymentObject.open();
       } catch (err) {
         console.error("Razorpay initiation error:", err);
-        toast.error(err.response?.data?.message || 'Failed to initiate payment');
+        const errorMsg = err.response?.data?.message || err.message || 'Failed to initiate payment';
+        toast.error(`Error: ${errorMsg}`);
         setLoading(false);
       }
     } else {
